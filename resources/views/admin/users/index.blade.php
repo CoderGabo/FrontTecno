@@ -20,8 +20,14 @@
 @stop
 
 @section('content')
-    <div class="card">
 
+    @if (session('info'))
+        <div class="alert alert-success">
+            <strong>{{ session('info') }}</strong>
+        </div>
+    @endif
+
+    <div class="card">
         <div class="card-header">
             <a class="btn btn-secondary" href="{{ route('admin.users.create') }}">Agregar Usuario</a>
         </div>
@@ -34,7 +40,6 @@
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Telefono</th>
-                        <th>Empresa</th>
                         <th colspan="2"></th>
                     </tr>
                 </thead>
@@ -43,10 +48,9 @@
                     @foreach ($users as $user)
                         <tr>
                             <td>{{ $user->id }}</td>
-                            <td>{{ $user->nombre }}</td>
+                            <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->telefono }}</td>
-                            <td>{{ $user->empresa }}</td>
                         </tr>
                     @endforeach
                 </tbody>

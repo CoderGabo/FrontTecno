@@ -18,11 +18,11 @@
             {!! Form::open(['route' => 'admin.users.store']) !!}
 
             <div class="form-group">
-                {!! Form::label('nombre', 'Nombre') !!}
+                {!! Form::label('name', 'Nombre') !!}
 
-                {!! Form::text('nombre', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el nombre del Usuario']) !!}
+                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el nombre del Usuario']) !!}
 
-                @error('nombre')
+                @error('name')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
 
@@ -34,6 +34,17 @@
                 {!! Form::text('email', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el correo del usuario']) !!}
 
                 @error('email')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+
+            </div>
+
+            <div class="form-group">
+                {!! Form::label('password', 'Contraseña') !!}
+
+                {!! Form::text('password', null, ['class' => 'form-control', 'placeholder' => 'Ingrese la contraseña']) !!}
+
+                @error('password')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
 
@@ -53,16 +64,7 @@
 
             </div>
 
-            <div class="form-group">
-                {!! Form::label('punto_origen', 'Punto Origen') !!}
 
-                {!! Form::text('punto_origen', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el punto de origen']) !!}
-
-                @error('punto_origen')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-
-            </div>
 
             {!! Form::submit('Crear Usuario', ['class' => 'btn btn-primary']) !!}
 

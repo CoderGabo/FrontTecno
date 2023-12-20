@@ -23,14 +23,19 @@ class ReportController extends Controller
             ->groupBy(function ($detalle) {
                 return Carbon::parse($detalle->fecha)->format('F'); // Agrupar por mes
             })
-            ->map(function ($details, $month) {
-                return $details->map(function ($detail) {
-                    return [
-                        'nombre' => $detail->product->nombre,
-                        'cantidad' => $detail->cantidad,
-                        'precio' => $detail->precio,
+            ->map(function ($details) {
+                // Merge items with the same product name
+                $mergedDetails = $details->groupBy('id_product')->map(function ($groupedDetails) {
+                    $mergedItem = [
+                        'nombre' => $groupedDetails->first()->product->nombre,
+                        'cantidad' => $groupedDetails->sum('cantidad'),
+                        'precio' => $groupedDetails->sum('total_pagar') / $groupedDetails->sum('cantidad'),
                     ];
+
+                    return $mergedItem;
                 });
+
+                return $mergedDetails;
             });
 
 
@@ -60,13 +65,15 @@ class ReportController extends Controller
         $results = Detalle::whereBetween('fecha', [$fechaInicio, $fechaFin])
             ->with('product')
             ->get()
-            ->map(function ($detail) {
+            ->groupBy('product.nombre') // Group by product name
+            ->map(function ($details, $nombre) {
                 return [
-                    'nombre' => $detail->product->nombre,
-                    'cantidad' => $detail->cantidad,
-                    'precio' => $detail->precio,
+                    'nombre' => $nombre,
+                    'cantidad' => $details->sum('cantidad'),
+                    'precio' => $details->sum('total_pagar') / $details->sum('cantidad'),
                 ];
-            });
+            })
+            ->values();
 
         $total = $results->sum(function ($detail) {
             return $detail['cantidad'] * $detail['precio'];
