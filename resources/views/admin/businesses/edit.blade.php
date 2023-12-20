@@ -8,27 +8,27 @@
 
 @section('content')
     @if (session('info'))
-    <div class="alert alert-success">
-        <strong>{{session('info')}}</strong>
-    </div>
+        <div class="alert alert-success">
+            <strong>{{ session('info') }}</strong>
+        </div>
     @endif
 
     <div class="card">
         <div class="card-body">
-            {!! Form::model($empresa, ['route' => ['admin.businesses.update', $empresa], "method" => 'put']) !!}
+            {!! Form::model($empresa, ['route' => ['admin.businesses.update', $empresa], 'method' => 'put']) !!}
 
-                <div class="form-group">
-                    {!! Form::label('name', 'Nombre') !!}
+            <div class="form-group">
+                {!! Form::label('name', 'Nombre') !!}
 
-                    {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el nombre de la empresa']) !!}
+                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el nombre de la empresa']) !!}
 
-                    @error('name')
-                        <span class="text-danger">{{$message}}</span>
-                    @enderror
+                @error('name')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
 
-                </div>
+            </div>
 
-                {!! Form::submit('Actualizar Epmresa', ['class' => 'btn btn-primary']) !!}
+            {!! Form::submit('Actualizar Empresa', ['class' => 'btn btn-primary']) !!}
 
             {!! Form::close() !!}
         </div>

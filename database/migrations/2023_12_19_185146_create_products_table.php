@@ -11,19 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-
-            $table->bigInteger('nro_cuenta')->unique();
-            $table->string('nombre');
-            $table->string('servicio');
-            $table->string('moneda');
+            $table->string('nombre')->nullable();
+            $table->text('descripcion');
+            $table->float('precio');
+            $table->float('promocion')->default(0);
+            $table->integer('stock');
             $table->string('eliminar')->default(false);
-
-            $table->unsignedBigInteger('id_empresa');
-
-            $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
-
             $table->timestamps();
         });
     }
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('products');
     }
 };

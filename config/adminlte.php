@@ -1,5 +1,21 @@
 <?php
 
+// echo (auth()->user());
+// Obtiene la hora actual en formato de 24 horas
+date_default_timezone_set('America/La_Paz');
+$horaActual = (int) date('H');
+
+$temaSidebar = 'sidebar-light-primary elevation-4';
+$temaNavbar = 'navbar-black navbar-light';
+$esDeNoche = false;
+
+// Define si es de noche (entre las 18:00 y las 6:00)
+if ($horaActual >= 18 || $horaActual < 6) {
+    $esDeNoche =  true;
+    $temaSidebar = 'sidebar-dark-primary elevation-4';
+    $temaNavbar = 'navbar-black navbar-dark';
+}
+
 return [
 
     /*
@@ -153,7 +169,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_dark_mode' => $esDeNoche,
 
     /*
     |--------------------------------------------------------------------------
@@ -192,9 +208,9 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => $temaSidebar,
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => $temaNavbar,
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
 
@@ -292,56 +308,65 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type'         => 'navbar-search',
-            'text'         => 'search',
-            'topnav_right' => true,
-        ],
-        [
             'type'         => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
         // Sidebar items:
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Dashboard',
+            'route' => 'admin.home',
+            'icon'  => 'fas fa-tachometer-alt fa-fw',
+            'classes' => '',
+            'can' => 'isAdmin'
         ],
         [
-            'text' => 'blog',
-            'url'  => 'admin/blog',
-            'can'  => 'manage-blog',
+            'header' => 'Administracción',
+            'classes' => 'text-uppercase',
         ],
-        [
-            'text'        => 'Dashboard',
-            'route'         => 'admin.home',
-            'icon'        => 'fas fa-tachometer-alt fa-fw',
-        ],
-        ['header' => 'Administrador'],
         [
             'text' => 'Perfil',
             'route'  => 'profile.show',
             'icon' => 'fas fa-fw fa-user',
+            'classes' => '',
+        ],
+        [
+            'text' => 'Usuarios',
+            'route'  => 'admin.users.index',
+            'icon' => 'fas fa-solid fa-users fa-fw',
+            'classes' => '',
+            'can' => 'isAdmin'
         ],
         [
             'text' => 'Empresas',
             'route'  => 'admin.businesses.index',
             'icon' => 'fas fa-solid fa-building fa-fw',
+            'classes' => '',
+            'can' => 'isAdmin'
         ],
         [
             'text' => 'Productos',
             'route'  => 'admin.products.index',
             'icon' => 'fas fa-solid fa-laptop fa-fw',
+            'classes' => '',
+            'can' => 'isAdmin'
         ],
         [
             'text' => 'Reportes',
             'route'  => 'admin.reports.index',
             'icon' => 'fas fa-solid fa-inbox fa-fw',
+            'classes' => '',
+            'can' => 'isAdmin'
         ],
         [
             'text' => 'Soporte',
             'route'  => 'admin.supports.index',
             'icon' => 'fas fa-solid fa-phone fa-fw',
+            'classes' => '',
+            'can' => 'isAdmin'
         ],
+
+
     ],
 
     /*

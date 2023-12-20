@@ -20,4 +20,6 @@
             @endforeach
         </ul>
     </div>
+    <!-- Muestra el contador de visitas -->
+    <p>Esta página ha sido visitada {{ session('page_visits', 0) }} veces.</p>
 @stop

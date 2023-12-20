@@ -10,8 +10,10 @@
     <div class="card">
 
         <div class="card-header">
-            <a class="btn btn-secondary" href="{{route('admin.accounts.create')}}">Agregar Cuenta</a>
+            <a class="btn btn-secondary" href="{{ route('admin.accounts.create') }}">Agregar Cuenta</a>
+            <a class="btn btn-secondary" href="{{ route('admin.items.create') }}">Agregar Item</a>
         </div>
+
 
         <div class="card-body">
             <table class="table table-striped">
@@ -28,17 +30,19 @@
                 <tbody>
                     @foreach ($accounts as $account)
                         <tr>
-                            <td>{{$account->nro_cuenta}}</td>
-                            <td>{{$account->nombre}}</td>
-                            <td>{{$account->servicio}}</td>
-                            <td>{{$account->moneda}}</td>
+                            <td>{{ $account->nro_cuenta }}</td>
+                            <td>{{ $account->nombre }}</td>
+                            <td>{{ $account->servicio }}</td>
+                            <td>{{ $account->moneda }}</td>
                             <td width="170px">
-                                <a class="btn btn-info btn-sm" href="{{route('admin.items.index')}}">Ver Items Pendientes</a>
+                                <a class="btn btn-info btn-sm" href="{{ route('admin.accounts.show', $account) }}">Ver Items
+                                    Pendientes</a>
                             </td>
                             <td width="10px">
-                                <form action="#" method="POST">
+                                <form action="{{ route('admin.accounts.destroy', $account) }}" method="POST"
+                                    onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta cuenta?');">
                                     @csrf
-                                    @method("delete")
+                                    @method('delete')
 
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         Eliminar
@@ -51,4 +55,6 @@
             </table>
         </div>
     </div>
+    <!-- Muestra el contador de visitas -->
+    <p>Esta página ha sido visitada {{ session('page_visits', 0) }} veces.</p>
 @stop

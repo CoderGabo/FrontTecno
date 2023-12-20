@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
+use App\Models\Item;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -12,12 +14,11 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = [
-            (object)['nro_item' => 1, 'descripcion' => 'Este item es la deuda de Juan Pérez', 'monto' => 50, 'pagar' => false, 'fecha_paga' => null],
-            (object)['nro_item' => 2, 'descripcion' => 'Este item es la deuda de María García', 'monto' => 75, 'pagar' => true, 'fecha_paga' => '2023-01-15'],
-            (object)['nro_item' => 3, 'descripcion' => 'Este item es la deuda de Carlos Rodríguez', 'monto' => 100, 'pagar' => false, 'fecha_paga' => null],
-        ];
 
+
+        $items = Item::where('pagar', false)
+            ->orderBy('id', 'asc')
+            ->get();
         return view('admin.items.index', compact('items'));
     }
 
@@ -26,7 +27,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.items.create');
     }
 
     /**
@@ -34,7 +35,29 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'monto' => 'required',
+            'descripcion' => 'required',
+            'nro_cuenta' => 'required',
+        ]);
+
+        // Buscar la cuenta por el número de cuenta proporcionado
+        $cuenta = Account::where('nro_cuenta', $request->input('nro_cuenta'))->first();
+
+        // Verificar si se encontró la cuenta
+        if (!$cuenta) {
+            return redirect()->back()->with('error', 'No se encontró una cuenta con ese número');
+        }
+
+        // Crear el ítem usando el ID de la cuenta encontrado
+        $item = Item::create([
+            'monto' => $request->input('monto'),
+            'descripcion' => $request->input('descripcion'),
+            'id_cuenta' => $cuenta->id,
+            // Agrega otros campos según sea necesario
+        ]);
+
+        return redirect()->route('admin.items.edit', $item)->with('info', 'El ítem se añadió con éxito');
     }
 
     /**
@@ -48,9 +71,9 @@ class ItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Item $item)
     {
-        //
+        return view('admin.items.edit', compact('item'));
     }
 
     /**
@@ -67,8 +90,27 @@ class ItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Item $item)
     {
-        //
+
+        // Obtener la cuenta asociada al ítem
+        $cuenta = $item->account;
+
+        // Verificar si el monto del ítem es mayor que la moneda de la cuenta
+        if ($item->monto > floatval($cuenta->moneda)) {
+            // Si el monto del ítem es mayor, lanzar una excepción de validación
+            return redirect()->route('admin.items.index')->with('info', 'El monto del ítem es mayor que la moneda de la cuenta. No se puede pagar.');
+        }
+
+        $item->update([
+            'pagar' => true,
+            'fecha_paga' => now(),  // Establece la fecha actual
+        ]);
+
+        $cuenta->update([
+            'moneda' => floatval($cuenta->moneda) - $item->monto,
+        ]);
+
+        return redirect()->route('admin.items.index')->with('info', 'El ítem se pagó con éxito');
     }
 }

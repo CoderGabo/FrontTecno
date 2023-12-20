@@ -13,11 +13,9 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        $businesses = [
-            (object)['id' => 1, 'name' => 'Acme Corporation'],
-            (object)['id' => 2, 'name' => 'Tech Innovators Ltd.'],
-            (object)['id' => 3, 'name' => 'Global Services Inc.'],
-        ];
+        $businesses = Empresa::where('eliminar', false)
+            ->orderBy('id', 'asc')
+            ->get();
 
         return view('admin.businesses.index', compact('businesses'));
     }
@@ -49,7 +47,11 @@ class EmpresaController extends Controller
      */
     public function show(Empresa $empresa)
     {
-        return view('admin.categories.show', compact('category'));
+        $accounts = $empresa->accounts->filter(function ($account) {
+            return $account->eliminar == false;
+        });
+
+        return view('admin.accounts.index', compact('accounts'));
     }
 
     /**
@@ -79,7 +81,9 @@ class EmpresaController extends Controller
      */
     public function destroy(Empresa $empresa)
     {
-        $empresa->delete();
+        // $empresa->delete();
+
+        $empresa->update(['eliminar' => true]);
 
         return redirect()->route('admin.businesses.index')->with('info', 'La empresa se elimino con exito');
     }

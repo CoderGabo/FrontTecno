@@ -7,61 +7,81 @@
 @stop
 
 @section('content')
-    {{-- @if (session('info'))
+    @if (session('info'))
         <div class="alert alert-success">
-            <strong>{{session('info')}}</strong>
+            <strong>{{ session('info') }}</strong>
         </div>
-    @endif --}}
+    @endif
 
     <div class="card">
         <div class="card-body">
-            {!! Form::model($account, ['route' => ['admin.categories.update', $account], "method" => 'put']) !!}
+            {!! Form::model($account, ['route' => ['admin.accounts.update', $account], 'method' => 'put']) !!}
 
-                <div class="form-group">
-                    {!! Form::label('nro_cuenta', 'Numero de Cuenta') !!}
+            <div class="form-group">
+                {!! Form::label('nro_cuenta', 'Numero de Cuenta') !!}
 
-                    {!! Form::text('nro_cuenta', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el numero de cuenta']) !!}
+                {!! Form::text('nro_cuenta', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el numero de cuenta']) !!}
 
-                    @error('nro_cuenta')
-                        <span class="text-danger">{{$message}}</span>
-                    @enderror
+                @error('nro_cuenta')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
 
-                </div>
+            </div>
 
-                <div class="form-group">
-                    {!! Form::label('nombre', 'Nombre') !!}
+            <div class="form-group">
+                {!! Form::label('nombre', 'Nombre') !!}
 
-                    {!! Form::text('nombre', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el nombre del propietario de la cuenta']) !!}
+                {!! Form::text('nombre', null, [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese el nombre del propietario de la cuenta',
+                ]) !!}
 
-                    @error('nombre')
-                        <span class="text-danger">{{$message}}</span>
-                    @enderror
+                @error('nombre')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
 
-                </div>
+            </div>
 
-                <div class="form-group">
-                    {!! Form::label('servicio', 'Servicio') !!}
+            <div class="form-group">
+                {!! Form::label('servicio', 'Servicio') !!}
 
-                    {!! Form::text('servicio', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el servicio de la cuenta']) !!}
+                {!! Form::text('servicio', null, [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese el servicio de la cuenta',
+                ]) !!}
 
-                    @error('servicio')
-                        <span class="text-danger">{{$message}}</span>
-                    @enderror
+                @error('servicio')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
 
-                </div>
+            </div>
 
-                <div class="form-group">
-                    {!! Form::label('moneda', 'Moneda') !!}
+            <div class="form-group">
+                {!! Form::label('moneda', 'Moneda') !!}
 
-                    {!! Form::text('moneda', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el monto de dinero en la cuenta']) !!}
+                {!! Form::text('moneda', null, [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese el monto de dinero en la cuenta',
+                ]) !!}
 
-                    @error('moneda')
-                        <span class="text-danger">{{$message}}</span>
-                    @enderror
+                @error('moneda')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
 
-                </div>
+            </div>
 
-                {!! Form::submit('Crear Cuenta', ['class' => 'btn btn-primary']) !!}
+            <div class="form-group">
+                {!! Form::label('id_empresa', 'Empresa') !!}
+
+                {!! Form::text('id_empresa', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el id de empresa']) !!}
+
+                @error('id_empresa')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+
+            </div>
+
+            {!! Form::submit('Crear Cuenta', ['class' => 'btn btn-primary']) !!}
 
             {!! Form::close() !!}
         </div>

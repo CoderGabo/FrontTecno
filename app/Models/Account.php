@@ -9,7 +9,15 @@ class Account extends Model
 {
     use HasFactory;
 
-    public function empresa(){
-        return $this->belongsTo(Account::class);
+    protected $fillable = ['nro_cuenta', 'nombre', 'servicio', 'moneda', 'id_empresa', 'eliminar'];
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'id_cuenta', 'id');
     }
 }

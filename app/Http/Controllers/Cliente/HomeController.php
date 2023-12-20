@@ -3,28 +3,64 @@
 namespace App\Http\Controllers\Cliente;
 
 use App\Http\Controllers\Controller;
+use App\Models\Detalle;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
-        $products = [
-            (object)['id' => 1, 'nombre' => 'Producto A', 'descripcion' => 'Descripción del Producto A', 'precio' => 50, 'promocion' => null],
-            (object)['id' => 2, 'nombre' => 'Producto B', 'descripcion' => 'Descripción del Producto B', 'precio' => 75, 'promocion' => 10],
-            (object)['id' => 3, 'nombre' => 'Producto C', 'descripcion' => 'Descripción del Producto C', 'precio' => 100, 'promocion' => null],
-            (object)['id' => 4, 'nombre' => 'Producto D', 'descripcion' => 'Descripción del Producto D', 'precio' => 150, 'promocion' => 15],
-        ];
+        $products = Product::where('eliminar', false)
+            ->orderBy('id', 'asc')
+            ->get();
 
         return view('cliente.index', compact('products'));
-
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
-        // $category = Category::create($request->all());
+        // echo $product;
+        $request->validate([
+            'cantidad' => 'required',
+        ]);
 
-        // return redirect()->route('cliente.index')->with('info', 'Compra realizada con exito');
 
+        // echo $request->input('product_id');
+
+
+        $productId = $request->input('product_id');
+        $product = Product::findOrFail($productId);
+
+        $id_user = Auth()->user()->id_rol;
+
+        try {
+            DB::beginTransaction();
+
+            $detalle = Detalle::create([
+                'cantidad' => $request->input('cantidad'),
+                'promocion' => $product->promocion,
+                'precio' => $product->precio,
+                'total_pagar' => $request->input('cantidad') * $product->precio,
+                'fecha' => now(),
+                'pagado' => true,
+                'id_product' => $product->id,
+                'id_user' => $id_user,
+            ]);
+
+            $product->update(['stock' => $product->stock - $request->input('cantidad')]);
+
+            DB::commit();
+
+            return redirect()->route('cliente.home')->with('info', 'La compra se realizó con éxito');
+        } catch (Exception $e) {
+            echo $e;
+            DB::rollBack();
+            // return redirect()->route('cliente.home')->with('info', 'Error');
+            // Handle the exception (redirect, show an error, log, etc.)
+        }
     }
 }

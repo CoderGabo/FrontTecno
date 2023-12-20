@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -12,12 +13,10 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $products = [
-            (object)['id' => 1, 'nombre' => 'Producto A', 'descripcion' => 'Descripción del Producto A', 'precio' => 50, 'promocion' => null],
-            (object)['id' => 2, 'nombre' => 'Producto B', 'descripcion' => 'Descripción del Producto B', 'precio' => 75, 'promocion' => 10],
-            (object)['id' => 3, 'nombre' => 'Producto C', 'descripcion' => 'Descripción del Producto C', 'precio' => 100, 'promocion' => null],
-        ];
-        
+        $products = Product::where('eliminar', false)
+            ->orderBy('id', 'asc')
+            ->get();
+
         return view('admin.products.index', compact('products'));
     }
 
@@ -37,12 +36,14 @@ class ProductoController extends Controller
         $request->validate([
             'nombre' => 'required',
             'descripcion' => 'required',
-            'precio' => 'required'
+            'precio' => 'required',
+            'stock' => 'required',
+            'promocion' => 'required',
         ]);
 
-        // $product = Product::create($request->all());
+        $product = Product::create($request->all());
 
-        // return redirect()->route('admin.products.edit', $product)->with('info', 'El producto se creo con exito');
+        return redirect()->route('admin.products.edit', $product)->with('info', 'El producto se creo con exito');
     }
 
     /**
@@ -56,7 +57,7 @@ class ProductoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $product)
+    public function edit(Product $product)
     {
         return view('admin.products.edit', compact('product'));
     }
@@ -64,7 +65,7 @@ class ProductoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $product)
+    public function update(Request $request, Product $product)
     {
         $request->validate([
             'nombre' => 'required',
@@ -72,19 +73,18 @@ class ProductoController extends Controller
             'precio' => 'required'
         ]);
 
-        // $product->update($request->all());
+        $product->update($request->all());
 
-        // return redirect()->route('admin.categories.edit', $product)->with('info', 'El producto se actualizó con exito');
-
+        return redirect()->route('admin.products.edit', $product)->with('info', 'El producto se actualizó con exito');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $product)
+    public function destroy(Product $product)
     {
         // $product->delete();
-
-        // return redirect()->route('admin.product.index')->with('info', 'El producto se elimino con exito');
+        $product->update(['eliminar' => true]);
+        return redirect()->route('admin.products.index')->with('info', 'El producto se elimino con exito');
     }
 }

@@ -4,21 +4,22 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
+    protected $business;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //Estatico
-        $accounts = [
-            (object)['nro_cuenta' => 12343535532, 'nombre' => 'Juan Pérez', 'servicio' => 'Bs', 'moneda' => 100],
-            (object)['nro_cuenta' => 98765432100, 'nombre' => 'María García', 'servicio' => 'Bs', 'moneda' => 150],
-            (object)['nro_cuenta' => 55511223344, 'nombre' => 'Carlos Rodríguez', 'servicio' => 'Bs', 'moneda' => 200],
-        ];
+
+        $accounts =  Account::where('eliminar', false)
+            ->orderBy('id', 'asc')
+            ->get();
 
         return view('admin.accounts.index', compact('accounts'));
     }
@@ -37,13 +38,16 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nro_cuenta' => 'required|unique',
+            // 'nro_cuenta' => 'required|unique',
+            'nro_cuenta' => 'required',
             'nombre' => 'required',
             'servicio' => 'required',
             'moneda' => 'required',
+            'id_empresa' => 'required',
         ]);
 
         $cuenta = Account::create($request->all());
+        echo $cuenta;
 
         return redirect()->route('admin.accounts.edit', $cuenta)->with('info', 'La cuenta se creo con exito');
     }
@@ -53,7 +57,13 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        return view('admin.accounts.show', compact('account'));
+        $items = $account->items->filter(function ($item) {
+            return $item->pagar == false;
+        });
+
+
+        return view('admin.items.index', compact('items'));
+        // return view('admin.accounts.show', compact('account'));
     }
 
     /**
@@ -74,6 +84,7 @@ class AccountController extends Controller
             'nombre' => 'required',
             'servicio' => 'required',
             'moneda' => 'required',
+            'id_empresa' => 'required',
         ]);
 
         $account->update($request->all());
@@ -86,7 +97,8 @@ class AccountController extends Controller
      */
     public function destroy(Account $account)
     {
-        $account->delete();
+        // $account->delete();
+        $account->update(['eliminar' => true]);
 
         return redirect()->route('admin.accounts.index')->with('info', 'La cuenta se elimino con exito');
     }

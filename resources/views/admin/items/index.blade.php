@@ -8,11 +8,11 @@
 
 @section('content')
 
-    {{-- @if (session('info'))
+    @if (session('info'))
         <div class="alert alert-success">
-            <strong>{{session('info')}}</strong>
+            <strong>{{ session('info') }}</strong>
         </div>
-    @endif --}}
+    @endif
 
     <div class="card">
 
@@ -23,8 +23,6 @@
                         <th>Numero de Item</th>
                         <th>Descripcion</th>
                         <th>Monto</th>
-                        <th>Pagar</th>
-                        <th>Fecha Paga</th>
                         <th colspan="2"></th>
                     </tr>
                 </thead>
@@ -32,13 +30,19 @@
                 <tbody>
                     @foreach ($items as $item)
                         <tr>
-                            <td>{{$item->nro_item}}</td>
-                            <td>{{$item->descripcion}}</td>
-                            <td>{{$item->monto}}</td>
-                            <td>{{$item->pagar}}</td>
-                            <td>{{$item->fecha_paga}}</td>
+                            <td>{{ $item->id }}</td>
+                            <td>{{ $item->descripcion }}</td>
+                            <td>{{ $item->monto }}</td>
                             <td width="115px">
-                                <a class="btn btn-primary btn-sm" href="{{route('admin.items.index')}}">Pagar Item</a>
+                                <form action="{{ route('admin.items.destroy', $item) }}" method="POST"
+                                    onsubmit="return confirm('¿Estás seguro de que quieres pagar este item?');">
+                                    @csrf
+                                    @method('delete')
+
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        Pagar Item
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -46,4 +50,6 @@
             </table>
         </div>
     </div>
+    <!-- Muestra el contador de visitas -->
+    <p>Esta página ha sido visitada {{ session('page_visits', 0) }} veces.</p>
 @stop

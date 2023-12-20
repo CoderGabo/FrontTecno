@@ -9,7 +9,10 @@ class Empresa extends Model
 {
     use HasFactory;
 
-    public function accounst(){
-        return $this->hasMany(Account::class);
+    protected $fillable = ['name', 'eliminar'];
+
+    public function accounts()
+    {
+        return $this->hasMany(Account::class, 'id_empresa', 'id');
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
+// use App\Http\Controllers\AdminController;
 
+use App\Http\Controllers\TemaController;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/cambiar-tema/{tema}', [TemaController::class, 'cambiarTema'])->name('cambiar-tema');
 
 Route::middleware([
     'auth:sanctum',
