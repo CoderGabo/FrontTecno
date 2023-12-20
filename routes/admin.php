@@ -16,7 +16,7 @@ Route::middleware(['App\Http\Middleware\PageVisitMiddleware'])->group(function (
     Route::resource('accounts', AccountController::class)->names('admin.accounts');
     Route::resource('items', ItemController::class)->names('admin.items');
     Route::resource('products', ProductoController::class)->names('admin.products');
-    Route::get('reports', [ReportController::class, 'index'])->name('admin.reports.index');
+    Route::resource('reports', ReportController::class)->names('admin.reports');
     Route::get('supports', [SupportController::class, 'index'])->name('admin.supports.index');
     Route::get('users', [UserController::class, 'index'])->name('admin.users.index');
     Route::get('users/create', [UserController::class, 'create'])->name('admin.users.create');
